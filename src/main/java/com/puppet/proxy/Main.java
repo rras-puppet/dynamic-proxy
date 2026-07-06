@@ -2,6 +2,7 @@ package com.puppet.proxy;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -16,6 +17,16 @@ public class Main {
         myInterface1.func1();
         myInterface1.func2();
         myInterface1.func3();
+
+        // jdk 自带的动态代理
+        PrintFunctionName printFunctionName = new PrintFunctionName();
+        MyHandler jdkMyHandler = (MyHandler)Proxy.newProxyInstance(
+                printFunctionName.getClass().getClassLoader(),
+                printFunctionName.getClass().getInterfaces(),
+                new JdkProxy(printFunctionName)
+        );
+
+        jdkMyHandler.functionBody("jdk");
     }
 
     static class PrintFunctionName implements MyHandler{
